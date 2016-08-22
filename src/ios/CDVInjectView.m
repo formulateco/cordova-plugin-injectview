@@ -1,8 +1,8 @@
 #import "CDVInjectView.h"
 
-@implementation Inject
+@implementation CDVInjectView
 
-- (void)pluginInitialize{
+- (void)pluginInitialize {
     NSLog(@"loader initializing");
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pageDidLoad:) name:CDVPageDidLoadNotification object:self.webView];
 }

@@ -1,5 +1,5 @@
 #import <Cordova/CDV.h>
 
-@interface Inject: CDVPlugin {
+@interface CDVInjectView: CDVPlugin {
 }
 @end

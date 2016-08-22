@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="injectview" version="1.0.1">
-	<name>InjectView</name>
-	<author>Sam Beran</author>
-	<description>Injects cordova and Plugins into any site</description>
-	<license>MIT</license>
-	<keywords>inject, cordova, javascript</keywords>
-	<repo>https://github.com/sberan/cordova-plugin-injectview.git</repo>
-	<issue>https://github.com/sberan/cordova-plugin-injectview/issues</issue>
-	<platform name="ios">
-		<header-file src="src/ios/CDVInjectView.h" />
-		<source-file src="src/ios/CDVInjectView.m" />
-	</platform>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="injectview" version="1.0.2">
+  <name>InjectView</name>
+  <author>Sam Beran</author>
+  <description>Injects cordova and Plugins into any site</description>
+  <license>MIT</license>
+  <keywords>inject, cordova, javascript</keywords>
+  <repo>https://github.com/sberan/cordova-plugin-injectview.git</repo>
+  <issue>https://github.com/sberan/cordova-plugin-injectview/issues</issue>
+  <platform name="ios">
+  <header-file src="src/ios/CDVInjectView.h" />
+  <source-file src="src/ios/CDVInjectView.m" />
+    <config-file target="config.xml" parent="/*">
+      <feature name="InjectView">
+        <param name="ios-package" value="CDVInjectView" />
+        <param name="onload" value="true" />
+      </feature>
+    </config-file>
+  </platform>
 </plugin>
