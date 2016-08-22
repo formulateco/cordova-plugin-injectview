@@ -8,7 +8,7 @@
 	<repo>https://github.com/sberan/cordova-plugin-injectview.git</repo>
 	<issue>https://github.com/sberan/cordova-plugin-injectview/issues</issue>
 	<platform name="ios">
-		<header-file src="src/ios/CDVInject.h" />
-		<source-file src="src/ios/CDVInject.m" />
+		<header-file src="src/ios/CDVInjectView.h" />
+		<source-file src="src/ios/CDVInjectView.m" />
 	</platform>
 </plugin>
