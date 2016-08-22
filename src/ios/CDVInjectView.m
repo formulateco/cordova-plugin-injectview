@@ -1,5 +1,4 @@
-#import "CDVInject.h"
-#import "AppDelegate.h"
+#import "CDVInjectView.h"
 
 @implementation Inject
 
@@ -14,7 +13,6 @@
     NSLog(@"loading cordova sources");
     [self injectJavascriptFile:@"www/cordova"];
     [self injectJavascriptFile:@"www/cordova_plugins"];
-    
     for (NSDictionary* pluginParameters in [self parseCordovaPlugins]) {
         NSString* file = pluginParameters[@"file"];
         NSString* path = [NSString stringWithFormat:@"www/%@", file];
@@ -39,7 +37,6 @@
     NSString *substring = nil;
     [scanner scanUpToString:@"];" intoString:&substring];
     substring = [NSString stringWithFormat:@"%@]", substring];
-    
     NSError* localError;
     NSData* data = [substring dataUsingEncoding:NSUTF8StringEncoding];
     NSArray* pluginObjects = [NSJSONSerialization JSONObjectWithData:data options:0 error:&localError];
