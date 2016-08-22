@@ -1,14 +1,20 @@
-# phonegap-plugin-injectView
+# Cordova InjectView
 
-**Not maintained. Use at your own risk.**
+Injects Cordova and Plugins directly into any site. Useful for loading
+cordova applications remotely.
 
-Injects Cordova and Plugins directly into the View.
+## Installation
 
-## install
 ```
-yourAppDir$ phonegap plugin add https://github.com/fastrde/phonegap-plugin-injectView.git
+cordova plugin add https://github.com/sberan/cordova-plugin-injectview.git
 ```
 
-## usage
+## Usage
 
-install. Set remote startpage in config.xml.
+Once installed, cordova.js and all associated JS files will be injected
+into any loaded view.
+
+## Caveats
+
+Currently only iOS is supported. Android support is planned but not
+complete.
