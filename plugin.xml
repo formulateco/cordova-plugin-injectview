@@ -7,14 +7,25 @@
   <keywords>inject, cordova, javascript</keywords>
   <repo>https://github.com/sberan/cordova-plugin-injectview.git</repo>
   <issue>https://github.com/sberan/cordova-plugin-injectview/issues</issue>
-  <platform name="ios">
-  <header-file src="src/ios/CDVInjectView.h" />
-  <source-file src="src/ios/CDVInjectView.m" />
-    <config-file target="config.xml" parent="/*">
+  
+  <platform name="android">
+    <source-file src="src/android/InjectView.java" target-dir="src/me/steenman/injectview" />
+    <config-file target="res/xml/config.xml">
       <feature name="InjectView">
-        <param name="ios-package" value="CDVInjectView" />
         <param name="onload" value="true" />
+        <param name="android-package" value="me.steenman.injectview.InjectView" />\
       </feature>
     </config-file>
+  </platform>
+  
+  <platform name="ios">
+    <header-file src="src/ios/CDVInjectView.h" />
+    <source-file src="src/ios/CDVInjectView.m" />
+      <config-file target="config.xml" parent="/*">
+        <feature name="InjectView">
+          <param name="ios-package" value="CDVInjectView" />
+          <param name="onload" value="true" />
+        </feature>
+      </config-file>
   </platform>
 </plugin>
