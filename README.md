@@ -8,10 +8,11 @@ This fork works for both iOS and Android platforms.
 ## Installation
 
 ```
-cordova plugin add https://github.com/sberan/cordova-plugin-injectview.git
+cordova plugin add https://github.com/lesteenman/cordova-plugin-injectview.git
 ```
 
 ## Usage
 
 Once installed, cordova.js and all associated JS files will be injected
-into any loaded view.
+into any webpage, once loaded. This means you can use any URL as content in
+your Cordova config.xml.
