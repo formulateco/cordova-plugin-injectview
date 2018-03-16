@@ -5,7 +5,8 @@
   "cordova": {
     "id": "cordova-plugin-injectview",
     "platforms": [
-      "ios"
+      "ios",
+      "android"
     ]
   },
   "repository": {
