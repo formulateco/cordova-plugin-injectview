@@ -10,6 +10,14 @@
 
 - (void)pageDidLoad:(NSNotification *)event
 {
+    // CDVPageDidLoadNotification is posted by the UIWebView::webViewDidFinishLoad delegate which
+    //    is called for each frame on a page. We should only inject Cordova sources once - when the
+    //    whole page is finished loading.
+    if ([[[event object] valueForKey:@"isLoading"] boolValue]) {
+        NSLog(@"loader waiting for all page frames to load");
+        return;
+    }
+
     NSLog(@"loading cordova sources");
     [self injectJavascriptFile:@"www/cordova"];
     [self injectJavascriptFile:@"www/cordova_plugins"];
