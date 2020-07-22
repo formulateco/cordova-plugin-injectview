@@ -8,7 +8,7 @@ This fork works for both iOS and Android platforms.
 ## Installation
 
 ```
-cordova plugin add https://github.com/lesteenman/cordova-plugin-injectview.git
+cordova plugin add https://github.com/formulateco/cordova-plugin-injectview.git
 ```
 
 ## Usage
