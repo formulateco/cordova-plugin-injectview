@@ -16,7 +16,7 @@
     <config-file target="res/xml/config.xml">
       <feature name="InjectView">
         <param name="onload" value="true" />
-        <param name="android-package" value="me.steenman.injectview.InjectView" />\
+        <param name="android-package" value="me.steenman.injectview.InjectView" />
       </feature>
     </config-file>
   </platform>
