@@ -23,74 +23,44 @@ import java.net.URL;
 import java.net.HttpURLConnection;
 
 public class InjectView extends CordovaPlugin {
-	private static final String LOG_TAG = "CordovaPluginInjectView";
+	private static final String LOG_TAG = "cordova-plugin-injectview";
 
 	private CordovaActivity activity;
 
 	@Override
 	public void pluginInitialize() {
-		Log.v(LOG_TAG, "Initializing plugin");
-		this.activity = (CordovaActivity) this.cordova.getActivity();
+		Log.v(LOG_TAG, "Plugin cordova-plugin-injectview loaded.");
+		this.activity = (CordovaActivity)this.cordova.getActivity();
 	}
 
 	@Override
 	public Object onMessage(String id, Object data) {
 		if ("onPageFinished".equals(id)) {
 			Log.v(LOG_TAG, "Page finished loading, inject!");
-
-			ArrayList<String> files = new ArrayList();
-			files.add("www/cordova.js");
-			files.add("www/cordova_plugins.js");
-			files.addAll(getCordovaPlugins());
-			injectJavascriptFiles(files);
+			injectJavascriptFiles(getCordovaFiles());
 		}
 
 		return null;
 	}
 
-	private ArrayList<String> getCordovaPlugins() {
-		ArrayList<String> plugins = new ArrayList();
-		String pluginsFile = getFileContents("www/cordova_plugins.js");
+	private ArrayList<String> getCordovaFiles() {
+		ArrayList<String> scripts = new ArrayList();
 
-		String start = "module.exports = ";
-		int offset = pluginsFile.indexOf(start) + start.length();
-
-		String pluginsJson = "";
-		int bracketCount = 0;
-
-		for (offset = offset; offset < pluginsFile.length(); offset++) {
-			char nextChar = pluginsFile.charAt(offset);
-			if (nextChar == '[')
-				bracketCount++;
-			if (bracketCount > 0)
-				pluginsJson += nextChar;
-			if (nextChar == ']')
-				bracketCount--;
-
-			if (bracketCount == 0 && nextChar == ']')
-				break;
-		}
-
-		Log.d(LOG_TAG, "Found JSON for cordova plugins: " + pluginsJson);
 		try {
-			JSONArray pluginsArray = new JSONArray(pluginsJson);
+			String filenamesJSON = getFileContents("www/cordova-plugin-injectview.json");
+			JSONArray filenames = new JSONArray(filenamesJSON);
 
-			Log.d(LOG_TAG, "cordova plugins count = " + pluginsArray.length());
-
-			for (int i = 0; i < pluginsArray.length(); i++) {
-				JSONObject pluginObject = pluginsArray.getJSONObject(i);
-				String plugin = (String) pluginObject.get("file");
-				// plugin = plugin.substring(plugin.indexOf("www"));
-				Log.d(LOG_TAG, "Add plugin www/" + plugin);
-				plugins.add("www/" + plugin);
+			for (int i = 0; i < filenames.length(); i++) {
+				String filename = filenames.getString(i);
+				scripts.add(filename);
 			}
 		} catch (JSONException e) {
-			Log.e(LOG_TAG, "Could not parse plugin JSON: " + pluginsJson);
+			Log.e(LOG_TAG, "Failed to load Cordova filenames.");
 			e.printStackTrace();
-			return plugins;
+			return scripts;
 		}
 
-		return plugins;
+		return scripts;
 	}
 
 	private String getFileContents(String file) {
