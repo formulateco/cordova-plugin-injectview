@@ -23,20 +23,19 @@ import java.net.URL;
 import java.net.HttpURLConnection;
 
 public class InjectView extends CordovaPlugin {
-	private static final String LOG_TAG = "cordova-plugin-injectview";
+	private static final String TAG = "cordova-plugin-injectview";
 
 	private CordovaActivity activity;
 
 	@Override
 	public void pluginInitialize() {
-		Log.v(LOG_TAG, "Plugin cordova-plugin-injectview loaded.");
+		Log.v(TAG, "Plugin cordova-plugin-injectview loaded.");
 		this.activity = (CordovaActivity)this.cordova.getActivity();
 	}
 
 	@Override
 	public Object onMessage(String id, Object data) {
 		if ("onPageFinished".equals(id)) {
-			Log.v(LOG_TAG, "Page finished loading, inject!");
 			injectJavascriptFiles(getCordovaFiles());
 		}
 
@@ -55,46 +54,11 @@ public class InjectView extends CordovaPlugin {
 				scripts.add(filename);
 			}
 		} catch (JSONException e) {
-			Log.e(LOG_TAG, "Failed to load Cordova filenames.");
+			Log.e(TAG, "Failed to load Cordova script manifest.");
 			e.printStackTrace();
-			return scripts;
 		}
 
 		return scripts;
-	}
-
-	private String getFileContents(String file) {
-		String contents = null;
-
-		try {
-			Uri uri = Uri.parse(file);
-			if (uri.isRelative()) {
-				try {
-					InputStream inputStream = activity.getResources().getAssets().open(file);
-					contents = InjectView.readStreamContent(inputStream);
-				} catch (IOException e) {
-					Log.e(LOG_TAG, String.format("ERROR: failed to load script file '%s'", file));
-					e.printStackTrace();
-				}
-			} else {
-				URL url = new URL(file);
-				try {
-					HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-					try {
-						InputStream inputStream = urlConnection.getInputStream();
-						contents = InjectView.readStreamContent(inputStream);
-					} finally {
-						urlConnection.disconnect();
-					}
-				} catch (IOException e) {
-					Log.e(LOG_TAG, String.format("ERROR: failed to load script file from url '%s'", file));
-				}
-			}
-		} catch (Exception e) {
-			Log.e(LOG_TAG, String.format("ERROR: Failed to parse filename '%s'", file));
-		}
-
-		return contents;
 	}
 
 	private void injectJavascriptFiles(ArrayList<String> files) {
@@ -104,15 +68,15 @@ public class InjectView extends CordovaPlugin {
 			@Override
 			public void run() {
 				for (String file : files) {
-					Log.v(LOG_TAG, String.format("Injecting script '%s'", file));
+					Log.v(TAG, String.format("Injecting script '%s'", file));
 
 					String content = getFileContents(file);
 					if (content == null) {
-						Log.v(LOG_TAG, String.format("Could not load script '%s'", file));
+						Log.v(TAG, String.format("Could not load script '%s'", file));
 						continue;
 					}
 					if (content.isEmpty()) {
-						Log.v(LOG_TAG, String.format("No contents found in script '%s'", file));
+						Log.v(TAG, String.format("No contents found in script '%s'", file));
 						return;
 					}
 					final String script = "//# sourceURL=" + file + "\r\n" + content + "\r\nconsole.log('Loaded script "
@@ -128,7 +92,7 @@ public class InjectView extends CordovaPlugin {
 												(Class<ValueCallback<String>>) (Class<?>) ValueCallback.class });
 								evaluateJavascriptMethod.invoke(webView, script, resultCallback);
 							} catch (Exception e) {
-								Log.v(LOG_TAG, String.format(
+								Log.v(TAG, String.format(
 										"WARNING: Webview does not support 'evaluateJavascript' method. Webview type: '%s'",
 										webView.getClass().getName()));
 								injectView.webView.getEngine().loadUrl("javascript:" + script, false);
@@ -144,12 +108,45 @@ public class InjectView extends CordovaPlugin {
 		});
 	}
 
-	private static String readStreamContent(InputStream inputStream) throws IOException {
-		int size = inputStream.available();
+	private String getFileContents(String filename) {
+		String contents = null;
+
+		try {
+			Uri uri = Uri.parse(filename);
+			if (uri.isRelative()) {
+				try {
+					InputStream stream = activity.getResources().getAssets().open(filename);
+					contents = InjectView.readStreamContent(stream);
+				} catch (IOException e) {
+					Log.e(TAG, String.format("ERROR: failed to load script file '%s'", filename));
+					e.printStackTrace();
+				}
+			} else {
+				URL url = new URL(filename);
+				try {
+					HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+					try {
+						InputStream stream = urlConnection.getInputStream();
+						contents = InjectView.readStreamContent(stream);
+					} finally {
+						urlConnection.disconnect();
+					}
+				} catch (IOException e) {
+					Log.e(TAG, String.format("ERROR: failed to load script file from url '%s'", filename));
+				}
+			}
+		} catch (Exception e) {
+			Log.e(TAG, String.format("ERROR: Failed to parse filename '%s'", filename));
+		}
+
+		return contents;
+	}
+
+	private static String readStreamContent(InputStream stream) throws IOException {
+		int size = stream.available();
 		byte[] bytes = new byte[size];
-		inputStream.read(bytes);
-		inputStream.close();
-		String content = new String(bytes, "UTF-8");
-		return content;
+		stream.read(bytes);
+		stream.close();
+		return new String(bytes, "UTF-8");
 	}
 }
