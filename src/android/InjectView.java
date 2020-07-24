@@ -1,7 +1,6 @@
 package me.steenman.injectview;
 
 import android.util.Log;
-import android.net.Uri;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -19,8 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.net.URL;
-import java.net.HttpURLConnection;
 
 public class InjectView extends CordovaPlugin {
 	private static final String TAG = "cordova-plugin-injectview";
@@ -109,44 +106,15 @@ public class InjectView extends CordovaPlugin {
 	}
 
 	private String getFileContents(String filename) {
-		String contents = null;
-
-		try {
-			Uri uri = Uri.parse(filename);
-			if (uri.isRelative()) {
-				try {
-					InputStream stream = activity.getResources().getAssets().open(filename);
-					contents = InjectView.readStreamContent(stream);
-				} catch (IOException e) {
-					Log.e(TAG, String.format("ERROR: failed to load script file '%s'", filename));
-					e.printStackTrace();
-				}
-			} else {
-				URL url = new URL(filename);
-				try {
-					HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-					try {
-						InputStream stream = urlConnection.getInputStream();
-						contents = InjectView.readStreamContent(stream);
-					} finally {
-						urlConnection.disconnect();
-					}
-				} catch (IOException e) {
-					Log.e(TAG, String.format("ERROR: failed to load script file from url '%s'", filename));
-				}
-			}
-		} catch (Exception e) {
-			Log.e(TAG, String.format("ERROR: Failed to parse filename '%s'", filename));
+		try (InputStream stream = activity.getResources().getAssets().open(filename)) {
+			int size = stream.available();
+			byte[] bytes = new byte[size];
+			stream.read(bytes);
+			return new String(bytes, "UTF-8");
+		} catch (IOException e) {
+			Log.e(TAG, String.format("Failed to read file: %s.", filename));
 		}
 
-		return contents;
-	}
-
-	private static String readStreamContent(InputStream stream) throws IOException {
-		int size = stream.available();
-		byte[] bytes = new byte[size];
-		stream.read(bytes);
-		stream.close();
-		return new String(bytes, "UTF-8");
+		return "";
 	}
 }
