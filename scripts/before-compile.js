@@ -5,18 +5,15 @@ function fatal(message) {
     throw new Error(`cordova-plugin-injectview: ${message}`);
 }
 
-module.exports = function(context) {
-    let root = context.opts.projectRoot;
-    if (!fs.existsSync(root)) {
-        fatal(`invalid project root: ${root}`);
+function createCordovaManifest(rootPath, platformName, platformPath) {
+    if (!platformName) {
+        fatal(`invalid platform: ${platformName}`);
     }
 
-    let platform = context.opts.platforms[0];
-    if (!platform) {
-        fatal(`invalid platform: ${platform}`);
+    if (!platformPath) {
+        fatal(`invalid platform path for ${platformName}`);
     }
 
-    let platformPath = context.opts.paths[0];
     if (!fs.existsSync(platformPath)) {
         fatal(`platform output path does not exist: ${platformPath}`);
     }
@@ -31,19 +28,23 @@ module.exports = function(context) {
         fatal(`Cordova plugins file does not exist: ${cordovaPluginsFilename}`);
     }
 
-    let configFilename = path.join(root, 'platforms', platform, `${platform}.json`);
+    // Load plugin info from platform configuration.
+    let configFilename = path.join(rootPath, 'platforms', platformName, `${platformName}.json`);
     if (!fs.existsSync(configFilename)) {
-        fatal(`platform configuration file does not exist for ${platform}: ${configFilename}`);
+        fatal(`platform configuration file does not exist for ${platformName}: ${configFilename}`);
     }
 
     let config = JSON.parse(fs.readFileSync(configFilename));
     let modules = (config && config.modules) || [];
 
+    // Always include cordova.js and cordova_plugins.js
+    // as part of the Cordova script manifest.
     let scriptFilenames = [
         path.posix.join('www', 'cordova.js'),
         path.posix.join('www', 'cordova_plugins.js')
     ];
 
+    // Include each plugin as part of the manifest.
     for (let module of modules) {
         let filename = module.file;
         if (!filename) {
@@ -58,10 +59,25 @@ module.exports = function(context) {
         scriptFilenames.push(path.posix.join('www', filename));
     }
 
+    // Write script manifest to be included as an app resource.
     let outputFilename = path.join(platformPath, 'cordova-plugin-injectview.json');
     fs.writeFileSync(outputFilename, JSON.stringify(scriptFilenames));
 
     if (!fs.existsSync(outputFilename)) {
         fatal(`output file does not exist: ${outputFilename}`);
+    }
+}
+
+module.exports = function(context) {
+    let rootPath = context.opts.projectRoot;
+    if (!fs.existsSync(rootPath)) {
+        fatal(`invalid project root: ${rootPath}`);
+    }
+
+    // Create manifest for each specified platform.
+    for (let i = 0; i < context.opts.platforms.length; i++) {
+        let platformName = context.opts.platforms[i];
+        let platformPath = context.opts.paths[i];
+        createCordovaManifest(rootPath, platformName, platformPath);
     }
 };

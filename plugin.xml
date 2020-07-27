@@ -8,7 +8,10 @@
   <repo>https://github.com/formulateco/cordova-plugin-injectview.git</repo>
   <issue>https://github.com/formulateco/cordova-plugin-injectview/issues</issue>
 
-  <!-- Generate Cordova script manifest as part of compilation. -->
+  <!--
+  Generate Cordova script manifest as part of compilation.
+  We use this manifest at runtime to determine which scripts to inject.
+  -->
   <hook type="before_compile" src="scripts/before-compile.js" />
 
   <platform name="android">
