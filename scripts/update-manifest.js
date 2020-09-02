@@ -57,10 +57,11 @@ module.exports = function(context) {
         fatal(`invalid project root: ${rootPath}`);
     }
 
-    let platforms = (context.opts.cordova && context.opts.cordova.platforms) || [];
-    if (platforms.length == 0) {
-        platforms = context.opts.platforms || [];
-    }
+    // Get the active platforms.
+    let cordovaPlatforms = (context.opts.cordova && context.opts.cordova.platforms) || [];
+    let optPlatforms = context.opts.platforms || [];
+    let allPlatforms = [...cordovaPlatforms, ...optPlatforms].map(name => (name || '').split('@')[0].trim()).filter(Boolean);
+    let platforms = new Set(allPlatforms);
 
     for (let platformName of platforms) {
         if (platformName != 'android' && platformName != 'ios') {
