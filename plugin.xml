@@ -12,10 +12,10 @@
   Generate Cordova script manifest when plugins change.
   We use this manifest at runtime to determine which scripts to inject.
   -->
-  <hook type="after_prepare" src="scripts/hook.js" />
-  <hook type="after_plugin_add" src="scripts/hook.js" />
-  <hook type="after_plugin_rm" src="scripts/hook.js" />
-  <hook type="before_plugin_uninstall" src="scripts/hook.js" />
+  <hook type="after_prepare" src="scripts/update-manifest.js" />
+  <hook type="after_plugin_add" src="scripts/update-manifest.js" />
+  <hook type="after_plugin_rm" src="scripts/update-manifest.js" />
+  <hook type="before_plugin_uninstall" src="scripts/update-manifest.js" />
 
   <platform name="android">
     <source-file src="src/android/InjectView.java" target-dir="src/me/steenman/injectview" />
