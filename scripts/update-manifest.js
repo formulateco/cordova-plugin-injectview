@@ -5,19 +5,12 @@ function fatal(message) {
     throw new Error(`cordova-plugin-injectview: ${message}`);
 }
 
-function createManifest(rootPath, platformName, platformPath, manifestFilename) {
-    if (!fs.existsSync(platformPath)) {
-        fatal(`platform path does not exist: ${platformPath}`);
-    }
-
-    let cordovaFilename = path.join(platformPath, 'cordova.js');
-    if (!fs.existsSync(cordovaFilename)) {
-        fatal(`Cordova platform file does not exist: ${cordovaFilename}`);
-    }
-
-    let cordovaPluginsFilename = path.join(platformPath, 'cordova_plugins.js');
-    if (!fs.existsSync(cordovaPluginsFilename)) {
-        fatal(`Cordova plugins file does not exist: ${cordovaPluginsFilename}`);
+function createManifest(rootPath, platformName, manifestFilename) {
+    let manifestDir = path.dirname(manifestFilename);
+    if (!fs.existsSync(manifestDir)) {
+        // The manifest's parent directory might not exist yet, e.g. after a cordova clean.
+        // In this case, we do not create the manifest yet and let a future hook handle it.
+        return;
     }
 
     // Load plugin info from platform configuration.
@@ -43,19 +36,11 @@ function createManifest(rootPath, platformName, platformPath, manifestFilename) 
             continue;
         }
 
-        let localPluginFilename = path.join(platformPath, filename);
-        if (!fs.existsSync(localPluginFilename)) {
-            fatal(`plugin file does not exist at expected location: ${localPluginFilename}`);
-        }
-
         scriptFilenames.push(path.posix.join('www', filename));
     }
 
     // Write script manifest to be included as an app resource.
     fs.writeFileSync(manifestFilename, JSON.stringify(scriptFilenames));
-    if (!fs.existsSync(manifestFilename)) {
-        fatal(`manifest file does not exist: ${manifestFilename}`);
-    }
 }
 
 function removeManifest(manifestFilename) {
@@ -73,24 +58,32 @@ module.exports = function(context) {
     }
 
     let platforms = (context.opts.cordova && context.opts.cordova.platforms) || [];
+    if (platforms.length == 0) {
+        platforms = context.opts.platforms || [];
+    }
+
     for (let platformName of platforms) {
-        var platformPath;
-        if (platformName == 'android') {
-            platformPath = path.join(rootPath, 'platforms', platformName, 'app', 'src', 'main', 'assets', 'www');
-        } else if (platformName == 'ios') {
-            platformPath = path.join(rootPath, 'platforms', platformName, 'www')
-        } else {
+        if (platformName != 'android' && platformName != 'ios') {
             // Unsupported platform.
             continue;
         }
 
-        let manifestFilename = path.join(platformPath, 'cordova-plugin-injectview.json');
-
-        // Create or remove manifest file based on hook.
-        if (context.hook == 'before_plugin_uninstall') {
-            removeManifest(manifestFilename);
+        let platformPaths = [path.join(rootPath, 'platforms', platformName, 'platform_www')];
+        if (platformName == 'android') {
+            platformPaths.push(path.join(rootPath, 'platforms', platformName, 'app', 'src', 'main', 'assets', 'www'));
         } else {
-            createManifest(rootPath, platformName, platformPath, manifestFilename);
+            platformPaths.push(path.join(rootPath, 'platforms', platformName, 'www'));
+        }
+
+        for (let platformPath of platformPaths) {
+            let manifestFilename = path.join(platformPath, 'cordova-plugin-injectview.json');
+
+            // Create or remove manifest file based on hook.
+            if (context.hook == 'before_plugin_uninstall') {
+                removeManifest(manifestFilename);
+            } else {
+                createManifest(rootPath, platformName, manifestFilename);
+            }
         }
     }
 };

@@ -15,6 +15,8 @@
   <hook type="after_prepare" src="scripts/update-manifest.js" />
   <hook type="after_plugin_add" src="scripts/update-manifest.js" />
   <hook type="after_plugin_rm" src="scripts/update-manifest.js" />
+  <hook type="after_platform_add" src="scripts/update-manifest.js" />
+  <hook type="before_compile" src="scripts/update-manifest.js" />
   <hook type="before_plugin_uninstall" src="scripts/update-manifest.js" />
 
   <platform name="android">
