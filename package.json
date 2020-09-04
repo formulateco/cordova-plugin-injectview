@@ -1,7 +1,7 @@
 {
   "name": "cordova-plugin-injectview",
   "version": "1.1.0",
-  "description": "Injects cordova and Plugins into any site",
+  "description": "Automatically inject Cordova platform and plugin scripts into your site.",
   "cordova": {
     "id": "cordova-plugin-injectview",
     "platforms": [
@@ -14,11 +14,19 @@
     "url": "git+https://github.com/formulateco/cordova-plugin-injectview.git"
   },
   "keywords": [
-    "inject",
+    "android",
     "cordova",
-    "javascript"
+    "cordova-android",
+    "cordova-android-plugin",
+    "cordova-ios",
+    "cordova-ios-plugin",
+    "cordova-plugin",
+    "inject",
+    "ios",
+    "javascript",
+    "plugin"
   ],
-  "author": "Sam Beran",
+  "author": "Chris Schmich <schmch@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/formulateco/cordova-plugin-injectview.git/issues"
