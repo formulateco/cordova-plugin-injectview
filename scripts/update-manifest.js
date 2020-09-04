@@ -69,6 +69,9 @@ module.exports = function(context) {
             continue;
         }
 
+        // Cordova has two locations for scripts. platform_www is a staging location that gets copied
+        // over to a platform-specific location as part of `cordova prepare`. The platform-specific
+        // location is used during compilation. Just to be thorough, we copy the manifest to both locations.
         let platformPaths = [path.join(rootPath, 'platforms', platformName, 'platform_www')];
         if (platformName == 'android') {
             platformPaths.push(path.join(rootPath, 'platforms', platformName, 'app', 'src', 'main', 'assets', 'www'));
