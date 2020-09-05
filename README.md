@@ -7,18 +7,18 @@ Automatically inject Cordova platform and plugin scripts into your site.
 This plugin supports Android and iOS.
 
 ```
-cordova plugin add https://github.com/formulateco/cordova-plugin-injectview
+cordova plugin add cordova-plugin-injectview
 ```
 
 ## Usage
 
-Adding the plugin to your project is all you need to do.
+Adding the plugin to your project is sufficient.
 
 At runtime, when a page loads in the Cordova-hosted web view, this plugin injects
 Cordova's platform scripts as well as all of your plugin scripts into the web view.
-Doing this allows you to integrate Cordova with a remotely hosted site without
-needing to explicitly include Cordova script tags or do request rewrites to
-load your Cordova plugin scripts.
+By doing this, you can integrate Cordova with a remotely hosted site without needing
+to explicitly include Cordova script tags or do request rewrites to load your Cordova
+plugin scripts.
 
 ## How It Works
 
@@ -30,10 +30,8 @@ platform scripts as well as your plugin scripts. This manifest file gets compile
 
 At runtime, this plugin hooks into the web view's page load event: `onPageFinished` for Android,
 `CDVPageDidLoadNotification` for iOS. Once the event fires, this plugin parses the manifest to determine
-all script paths, reads each script, concatenates everything into one large blob, then evaluates the
+all script paths, reads each script, concatenates everything into one large script, then evaluates the
 whole thing using the web view's JavaScript engine.
-
-Cordova and your plugins are now accessible with your remote site.
 
 ## License
 
