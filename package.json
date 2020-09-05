@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-injectview",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Automatically inject Cordova platform and plugin scripts into your site.",
   "cordova": {
     "id": "cordova-plugin-injectview",
