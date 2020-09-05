@@ -32,11 +32,16 @@
 - (NSArray*)getCordovaFiles {
     NSString *manifest = [self readResourceFile:@"www/cordova-plugin-injectview.json"];
     NSData *data = [manifest dataUsingEncoding:NSUTF8StringEncoding];
+    if (data == nil) {
+        NSLog(@"Could not find or load Cordova script manifest.");
+        return nil;
+    }
 
     NSError *error;
     NSArray *filenames = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
     if (filenames == nil) {
-        NSLog(@"Failed to load Cordova script manifest.");
+        NSLog(@"Failed to parse Cordova script manifest.");
+        return nil;
     }
 
     return filenames;
